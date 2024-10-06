@@ -19,6 +19,7 @@ const params = ref({
   cate_id: '',
   state: ''
 })
+
 // 基于请求参数,获得列表
 const getArticleList = async () => {
   loading.value = true
@@ -62,12 +63,12 @@ const onEditArticle = (row) => {
   articleEditRef.value.open(row)
 }
 //删除逻辑
-const onDeleteArticle = (row) => {}
+// const onDeleteArticle = (row) => {}
 </script>
 
 <template>
   <page-container>
-    <template>
+    <template #extra>
       <el-button type="primary" @click="onAddArticle">添加文章</el-button>
     </template>
     <!-- 表单区域 -->
@@ -137,5 +138,5 @@ const onDeleteArticle = (row) => {}
     />
   </page-container>
 
-  <ArticleEdit></ArticleEdit>
+  <ArticleEdit ref="articleEditRef"></ArticleEdit>
 </template>
