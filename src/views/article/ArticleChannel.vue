@@ -1,9 +1,10 @@
 <script setup>
 import { ref } from 'vue'
 const channelList = ref([])
-import { artGetChannelsService } from '@/api/article.js'
+import { artDelChannelsService, artGetChannelsService } from '@/api/article.js'
 import ChannelEdit from '@/components/ChannelEdit.vue'
 import { Edit, Delete } from '@element-plus/icons-vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 const dialog = ref()
 const loading = ref(false)
 const getChannelList = async () => {
@@ -14,14 +15,30 @@ const getChannelList = async () => {
 }
 getChannelList()
 
-const onEditChannel = (row, $index) => {
-  console.log(row, $index)
+const onEditChannel = (row) => {
+  dialog.value.open(row)
+  console.log(row)
 }
-const onDeleteChannel = (row, $index) => {
-  console.log(row, $index)
-}
+
 const onAddChannel = () => {
-  dialog.value.open()
+  dialog.value.open({})
+}
+
+const onDelchannel = async (row) => {
+  // 此处有bug，弹出框卡最左边
+  await ElMessageBox.confirm('你确认要删除该类吗', '温馨提示', {
+    type: 'warning',
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    position: 'top'
+  }).then(async () => {
+    await artDelChannelsService(row.id)
+    ElMessage({
+      type: 'success',
+      message: 'Delete completed'
+    }).catch(() => {})
+    getChannelList()
+  })
 }
 </script>
 
@@ -36,18 +53,18 @@ const onAddChannel = () => {
       <el-table-column prop="cate_name" label="分类名称" />
       <el-table-column prop="cate_alias" label="分类别名" />
       <el-table-column label="操作" width="100">
-        <template #default="{ row, $index }">
+        <template #default="{ row }">
           <el-button
             :icon="Edit"
             circle
             plain
-            @click="onEditChannel(row, $index)"
+            @click="onEditChannel(row)"
           ></el-button>
           <el-button
             :icon="Delete"
             circle
             plain
-            @click="onDeleteChannel(row, $index)"
+            @click="onDelchannel(row)"
           ></el-button>
         </template>
       </el-table-column>
