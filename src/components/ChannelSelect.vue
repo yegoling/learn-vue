@@ -13,6 +13,9 @@ defineProps({
   // 必须命名为modelValue，和父组件中v-model对应
   modelValue: {
     type: [Number, String]
+  },
+  width: {
+    type: String
   }
 })
 
@@ -22,6 +25,7 @@ getChannelList()
   <el-select
     :modelValue="modelValue"
     @update:modelValue="emit('update:modelValue', $event)"
+    :style="{ width }"
   >
     <!-- label用来展示，value用来提交后台 -->
     <el-option

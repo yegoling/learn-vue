@@ -4,10 +4,14 @@ import { Delete, Edit } from '@element-plus/icons-vue'
 import ChannelSelect from '@/components/ChannelSelect.vue'
 import { artGetListService } from '@/api/article'
 import { formatTime } from '@/utils/format'
+import ArticleEdit from '@/components/ArticleEdit.vue'
+
 // 文章列表
 const articleList = ref([])
 // 默认总条数0
 const total = ref(0)
+
+const loading = ref(false)
 // 请求参数
 const params = ref({
   pagenum: 1, //当前页
@@ -17,9 +21,23 @@ const params = ref({
 })
 // 基于请求参数,获得列表
 const getArticleList = async () => {
+  loading.value = true
+
   const res = await artGetListService(params.value)
   articleList.value = res.data
   total.value = res.data.total
+
+  loading.value = false
+}
+
+const onSearch = () => {
+  params.value.pagenum = 1
+  getArticleList()
+}
+const onReset = () => {
+  params.value.pagenum = 1
+  params.value.date_id = ''
+  params.value.state = ''
 }
 
 // 处理分页逻辑
@@ -34,14 +52,23 @@ const onCurrentChange = (page) => {
   params.value.pagenum = page
   getArticleList()
 }
-// const onDeleteArticle = (row) => {}
-// const onEditArticle = (row) => {}
+const articleEditRef = ref()
+//添加逻辑
+const onAddArticle = () => {
+  articleEditRef.value.open({})
+}
+//编辑逻辑
+const onEditArticle = (row) => {
+  articleEditRef.value.open(row)
+}
+//删除逻辑
+const onDeleteArticle = (row) => {}
 </script>
 
 <template>
   <page-container>
     <template>
-      <el-button>添加文章</el-button>
+      <el-button type="primary" @click="onAddArticle">添加文章</el-button>
     </template>
     <!-- 表单区域 -->
     <el-form :inline="true">
@@ -57,12 +84,12 @@ const onCurrentChange = (page) => {
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">搜索</el-button>
-        <el-button></el-button>
+        <el-button @click="onSearch" type="primary">搜索</el-button>
+        <el-button @click="onReset">重置</el-button>
       </el-form-item>
     </el-form>
     <!-- 表格区域 -->
-    <el-table :data="articleList">
+    <el-table :data="articleList" v-loading="loading">
       <el-table-column label="文章标题" prop="title">
         <template #default="{ row }">
           <el-link type="primary" :underline="false">{{ row.title }}</el-link>
@@ -109,4 +136,6 @@ const onCurrentChange = (page) => {
       style="margin-top: 20px; justify-content: flex-end"
     />
   </page-container>
+
+  <ArticleEdit></ArticleEdit>
 </template>
