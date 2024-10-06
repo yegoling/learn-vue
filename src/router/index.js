@@ -1,4 +1,4 @@
-// import { useUserStore } from '@/stores'
+import { useUserStore } from '@/stores'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -39,10 +39,15 @@ const router = createRouter({
   ]
 })
 
-// 登录访问拦截，默认直接放行，根据返回值决定放行还是拦截，false拦回from的地址
-// router.beforeEach(() => {
-//   const useStore = useUserStore()
-//   if (!useStore.token && toString.path !== '/login') return '/login'
-// })
+//  登录访问拦截，默认直接放行，根据返回值决定放行还是拦截，false拦回from的地址
+router.beforeEach((to, from, next) => {
+  if (to.path === '/login') next()
+  else {
+    const useStore = useUserStore()
+    if (!useStore.token) {
+      next('/login')
+    } else next()
+  }
+})
 
 export default router

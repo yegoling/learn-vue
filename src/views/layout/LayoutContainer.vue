@@ -13,14 +13,21 @@ import avatar from '@/assets/default.png'
 import { useUserStore } from '@/stores'
 import { onMounted } from 'vue'
 import router from '@/router'
+import { ElMessageBox } from 'element-plus'
 
 const userStore = useUserStore()
 onMounted(() => {
   userStore.getUser()
 })
 
-const handleCommand = (key) => {
+const handleCommand = async (key) => {
   if (key === 'logout') {
+    // 退出操作
+    await ElMessageBox.confirm('你确定要进行退出吗', '温馨提示', {
+      type: 'warning',
+      confirmButtonText: '确认',
+      cancelButtonText: '取消'
+    })
     userStore.removeToken()
     userStore.setUser({})
     router.push('/login')
