@@ -1,7 +1,17 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, nextTick } from 'vue'
 import ChannelSelect from './ChannelSelect.vue'
 import { Plus } from '@element-plus/icons-vue'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
+import {
+  artEditService,
+  artGetDetailService,
+  artPublishService
+} from '@/api/article'
+import { ElMessage } from 'element-plus'
+import { baseURL } from '@/utils/request'
+import axios from 'axios'
 const defaultForm = {
   title: '',
   cate_id: '',
@@ -9,6 +19,8 @@ const defaultForm = {
   content: '',
   state: ''
 }
+
+const editref = ref()
 
 //formModel.value指ref()里包的东西吗
 const formModel = ref({
@@ -25,21 +37,83 @@ const onSelectFile = (uploadFile) => {
   formModel.value.cover_img = uploadFile.raw
 }
 
+const emit = defineEmits(['success'])
+// 提交
+const onPublish = async (state) => {
+  // 将已发布还是草稿状态存入formModel
+  formModel.value.state = state
+  // 当前接口需要formDate对象，将普通对象转换成formDate对象
+  const fd = new FormData()
+  for (let key in formModel.value) {
+    fd.append(key, formModel.value[key])
+  }
+
+  // 发请求，根据id判断是添加还是编辑
+  if (formModel.value.id) {
+    // 编辑
+    await artEditService(fd)
+    ElMessage('修改成功')
+    visiableDrawer.value = false
+    emit('success', 'edit')
+  } else {
+    // 提交
+    await artPublishService(fd)
+    ElMessage.success('添加成功')
+    visiableDrawer.value = false
+    // 通知父组件添加成功
+    emit('success', 'add')
+  }
+}
+
 //根据传入的row判断是什么逻辑，有id是编辑，没id是添加
-const open = (row) => {
+const open = async (row) => {
   visiableDrawer.value = true
 
   if (row.id) {
-    console.log(formModel.value)
+    //  id存在则进行编辑，根据id获取文章详情，存入formModel.value
+    const res = await artGetDetailService(row.id)
+    console.log(res.data)
+    formModel.value = res.data
+    // 图片回显单独处理
+    imgUrl.value = baseURL + formModel.value.cover_img
+    // 需要将网络图片地址转换成file对象提交给后台
+    await imageUrlToFile(imgUrl.value, formModel.value.cover_img)
   } else {
     //添加前重置数据
     formModel.value = { ...defaultForm }
+    imgUrl.value = ''
+    // DOM更新后再调用其方法
+    nextTick(() => {
+      editref.value.setHTML('')
+    })
   }
 }
 
 defineExpose({
   open
 })
+
+// 将网络图片地址转换为File对象
+async function imageUrlToFile(url, fileName) {
+  try {
+    // 第一步：使用axios获取网络图片数据
+    const response = await axios.get(url, { responseType: 'arraybuffer' })
+    const imageData = response.data
+
+    // 第二步：将图片数据转换为Blob对象
+    const blob = new Blob([imageData], {
+      type: response.headers['content-type']
+    })
+
+    // 第三步：创建一个新的File对象
+    const file = new File([blob], fileName, { type: blob.type })
+
+    return file
+  } catch (error) {
+    console.error('将图片转换为File对象时发生错误:', error)
+    throw error
+  }
+}
 </script>
 
 <template>
@@ -70,11 +144,18 @@ defineExpose({
         </el-upload>
       </el-form-item>
       <el-form-item label="文章内容" prop="content">
-        <div class="editor">富文本编辑器</div>
+        <div class="editor">
+          <quill-editor
+            ref="editref"
+            v-model:content="formModel.content"
+            theme="snow"
+          >
+          </quill-editor>
+        </div>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">发布</el-button>
-        <el-button type="info">草稿</el-button>
+        <el-button @click="onPublish('已发布')" type="primary">发布</el-button>
+        <el-button @click="onPublish('草稿')" type="info">草稿</el-button>
       </el-form-item>
     </el-form>
   </el-drawer>
@@ -106,6 +187,13 @@ defineExpose({
       height: 178px;
       text-align: center;
     }
+  }
+}
+
+.editor {
+  width: 100%;
+  :deep(.ql-editor) {
+    min-height: 200px;
   }
 }
 </style>

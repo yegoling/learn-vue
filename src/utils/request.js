@@ -52,3 +52,4 @@ instance.interceptors.response.use(
 )
 
 export default instance
+export { baseURL }

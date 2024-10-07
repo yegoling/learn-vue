@@ -64,6 +64,16 @@ const onEditArticle = (row) => {
 }
 //删除逻辑
 // const onDeleteArticle = (row) => {}
+
+//添加或编辑成功的回调
+const onSuccess = (type) => {
+  if (type === 'add') {
+    //添加则渲染最后一页
+    const lastPage = Math.ceil((total.value + 1) / params.value.pagesize)
+    params.value.pagenum = lastPage
+  }
+  getArticleList()
+}
 </script>
 
 <template>
@@ -138,5 +148,5 @@ const onEditArticle = (row) => {
     />
   </page-container>
 
-  <ArticleEdit ref="articleEditRef"></ArticleEdit>
+  <ArticleEdit ref="articleEditRef" @success="onSuccess"></ArticleEdit>
 </template>
