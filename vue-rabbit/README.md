@@ -1,3 +1,4 @@
 # vue-rabbit
 
-![alt text](readme_img\image.png)
+axios配置
+![alt text](./readme_img/image.png)
