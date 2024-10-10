@@ -11,16 +11,16 @@ export default defineConfig({
   plugins: [
     vue(),
     AutoImport({
-      resolvers: [ElementPlusResolver()],
+      resolvers: [ElementPlusResolver()]
     }),
     Components({
       resolvers: [
         // 1.配置elementPlus采用scss样式配色系统
-        ElementPlusResolver({importStyle: "sass"})
-    ],
-    }),
+        ElementPlusResolver({ importStyle: 'sass' })
+      ]
+    })
   ],
-  
+
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
@@ -28,12 +28,12 @@ export default defineConfig({
   },
   css: {
     preprocessorOptions: {
-        scss: {
-            // 2.自动导入定制化样式文件进行样式覆盖
-            additionalData: `
+      scss: {
+        // 2.自动导入定制化样式文件进行样式覆盖
+        additionalData: `
                   @use "@/styles/element/index.scss" as *;       
-    `,
-        }
+    `
+      }
     }
-}
+  }
 })
