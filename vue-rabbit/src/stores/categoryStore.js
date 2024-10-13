@@ -8,7 +8,7 @@ export const useCategoryStore = defineStore('category', () => {
     // 切不能写成 categoryList.value= await getCategoryApi().result  !!!
     const res = await getCategoryApi()
     categoryList.value = res.result
-    console.log(categoryList.value)
+    // console.log(categoryList.value)
   }
   return {
     categoryList,

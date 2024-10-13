@@ -14,8 +14,8 @@ categoryStore.getCategory()
   <LayoutNav></LayoutNav>
   <LayoutFixed></LayoutFixed>
   <layout-header></layout-header>
-  <div style="height: 500px"></div>
-  <RouterView>home界面</RouterView>
+  <!-- RoutView内不能写东西，不然不再显示二级路由内容 -->
+  <RouterView></RouterView>
   <layout-footer></layout-footer>
 </template>
 <style scoped lang="scss"></style>
