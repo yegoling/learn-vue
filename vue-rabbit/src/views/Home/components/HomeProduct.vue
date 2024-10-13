@@ -3,7 +3,7 @@
 import HomePanel from './HomePanel.vue'
 import { getGoodsProduct } from '@/apis/layout'
 import { ref } from 'vue'
-import GoodItem from './subComppnents/GoodItem.vue'
+import GoodItem from './subComponents/GoodItem.vue'
 
 const goodsProduct = ref([])
 const getGoods = async () => {

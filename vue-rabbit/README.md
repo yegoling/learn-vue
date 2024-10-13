@@ -72,6 +72,12 @@ const { stop } = useIntersectionObserver(
                 )
 
 ```
+## 更新路由缓存，实现一点就跳转，不需要再次刷新页面
+```
+onBeforeRouteUpdate((to) => {
+  getNewCategoryList(to.params.id)
+})
+```
 
 ## 遇到的坑
 ### 这里不能写BannerList.value

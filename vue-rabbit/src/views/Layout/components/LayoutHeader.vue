@@ -1,5 +1,5 @@
 <script setup>
-import { useCategoryStore } from '@/stores/categoryStore'
+import { useCategoryStore } from '@/stores/CategoryStore'
 
 const categoryStore = useCategoryStore()
 console.log(categoryStore.categoryList)
@@ -17,7 +17,9 @@ console.log(categoryStore.categoryList)
           v-for="item in categoryStore.categoryList"
           :key="item.id"
         >
-          <RouterLink :to="`/category/${item.id}`">{{ item.name }}</RouterLink>
+          <RouterLink :to="`/category/${item.id}`" active-class="active">{{
+            item.name
+          }}</RouterLink>
         </li>
       </ul>
       <div class="search">

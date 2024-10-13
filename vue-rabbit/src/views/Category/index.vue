@@ -3,16 +3,34 @@
 import { ref } from 'vue'
 import { getCategoryApi } from '@/apis/category'
 import { useRoute } from 'vue-router'
+import Banner from '../Home/components/subComponents/Banner.vue'
+import { getBannerApi } from '@/apis/layout'
+import { onBeforeRouteUpdate } from 'vue-router'
+
+const BannerList = ref([])
+const getBannerList = async () => {
+  const res = await getBannerApi()
+  BannerList.value = res.result
+}
 
 const CategoryList = ref({})
 const getCategoryList = async () => {
   const route = useRoute()
-  console.log(route.params.id)
   const res = await getCategoryApi(route.params.id)
   CategoryList.value = res.result
-  console.log(CategoryList)
 }
+
+const getNewCategoryList = async (id) => {
+  const res = await getCategoryApi(id)
+  CategoryList.value = res.result
+}
+getBannerList()
 getCategoryList()
+
+onBeforeRouteUpdate((to) => {
+  // console.log(to.params.id)
+  getNewCategoryList(to.params.id)
+})
 </script>
 
 <template>
@@ -24,6 +42,35 @@ getCategoryList()
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
           <el-breadcrumb-item>{{ CategoryList.name }}</el-breadcrumb-item>
         </el-breadcrumb>
+      </div>
+      <div class="home-banner">
+        <Banner :BannerList="BannerList"></Banner>
+      </div>
+
+      <!--category/index.vue-->
+
+      <div class="sub-list">
+        <h3>全部分类</h3>
+        <ul>
+          <li v-for="i in CategoryList.children" :key="i.id">
+            <RouterLink to="/">
+              <img :src="i.picture" />
+              <p>{{ i.name }}</p>
+            </RouterLink>
+          </li>
+        </ul>
+      </div>
+      <div
+        class="ref-goods"
+        v-for="item in CategoryList.children"
+        :key="item.id"
+      >
+        <div class="head">
+          <h3>- {{ item.name }}-</h3>
+        </div>
+        <div class="body">
+          <GoodsItem v-for="good in item.goods" :goods="good" :key="good.id" />
+        </div>
       </div>
     </div>
   </div>
@@ -104,6 +151,18 @@ getCategoryList()
 
   .bread-container {
     padding: 25px 0;
+  }
+  .home-banner {
+    width: 1240px;
+    height: 500px;
+    margin: 0px 0 0 0;
+    left: 0;
+    top: 0;
+    z-index: 98;
+    img {
+      width: 100%;
+      height: 500px;
+    }
   }
 }
 </style>
