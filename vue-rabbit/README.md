@@ -9,7 +9,7 @@
 ```
 "editor.codeActionsOnSave": {"source.fixAll":true },
 ```
-+.eslintrc.cjs中对rules添加配置参考如下：
++ .eslintrc.cjs中对rules添加配置参考如下：
 ```
 rules: {
     'prettier/prettier': [
