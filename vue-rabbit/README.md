@@ -78,8 +78,10 @@ onBeforeRouteUpdate((to) => {
   getNewCategoryList(to.params.id)
 })
 ```
+## 切换路由，自动滚动到页面的顶部
+![alt text](image3.jpg)
 
-## 遇到的坑
+## 遇到的坑及一些经验
 ### 这里不能写BannerList.value
 ![alt text](./readme_img/image2.png)
 
@@ -88,5 +90,38 @@ onBeforeRouteUpdate((to) => {
 <RouterLink :to="`/category/${item.id}`">{{ item.name }}</RouterLink>
 ```
 ### 当用户访问/user/123时，$route.params.id将显示为123
+
+### 对于响应式ref的.value属性，在javascript结构中都需要写出，而在template模版中就不需要再写，因为vue会自动解包
+
+
+### 通过v-for对Good-item组件进行复制传参：
+```
+  <GoodItem
+          :goods="goods"
+          v-for="goods in BaseList"
+          :key="goods.id"
+        ></GoodItem>
+```
+
+### 在设计无限滚动时，一定需要设置两个变量,在调接口时传入BaseData，返回值用BaseList接收，否则调用接口的返回值会不符合传入接口的数据的规定结构，报错！
+```
+const BaseList = ref([])
+const BaseData = ref({
+  category: route.params.id,
+  page: 10,
+  pageSize: 20,
+  sortField: 'publishTime'
+})
+...
+ const res = await getBaseListApi(BaseData.value) 
+...
+ BaseList.value = res.result.items
+...
+ const res = await getBaseListApi(BaseData.value)
+ BaseList.value = [...BaseList.value, ...res.result.items]
+```
+
+### 对下述代码，序号a输出结果不为空，序号b输出结果为空，原因在于由于await存在使请求api过程中b句先执行。由此可以推断出在onmounted中调用getGoods()的原因：保证getGoods()的执行顺序，防止意外情况？
+![alt text](image4.jpg)
 
 

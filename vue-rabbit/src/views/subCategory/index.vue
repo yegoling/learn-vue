@@ -1,8 +1,43 @@
 <!--views/subCategory/index.vue-->
 <script setup>
 import { useCategoryFilter } from './composables/useCategoryFilter'
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { getBaseListApi } from '@/apis/category'
+import GoodItem from '../Home/components/subComponents/GoodItem.vue'
 
 const { CategoryFilter } = useCategoryFilter()
+
+const route = useRoute()
+const BaseList = ref([])
+const BaseData = ref({
+  category: route.params.id,
+  page: 1,
+  pageSize: 20,
+  sortField: 'publishTime'
+})
+const getBaseList = async () => {
+  const res = await getBaseListApi(BaseData.value) //数据要传进去
+  BaseList.value = res.result.items
+}
+
+getBaseList()
+
+const tabChange = () => {
+  BaseData.value.sortField = 1
+  getBaseList()
+}
+
+const disabled = ref(false)
+const load = async () => {
+  BaseData.value.page += 1
+
+  const res = await getBaseListApi(BaseData.value)
+  BaseList.value = [...BaseList.value, ...res.result.items]
+  if (res.result.items.length === 0) {
+    disabled.value = true
+  }
+}
 </script>
 
 <template>
@@ -19,13 +54,22 @@ const { CategoryFilter } = useCategoryFilter()
       </el-breadcrumb>
     </div>
     <div class="sub-container">
-      <el-tabs>
+      <el-tabs v-model="BaseData.sortField" @tab-change="tabChange">
         <el-tab-pane label="最新商品" name="publishTime"></el-tab-pane>
         <el-tab-pane label="最高人气" name="orderNum"></el-tab-pane>
         <el-tab-pane label="评论最多" name="evaluateNum"></el-tab-pane>
       </el-tabs>
-      <div class="body">
+      <div
+        class="body"
+        v-infinite-scroll="load"
+        :infinite-scroll-disabled="disabled"
+      >
         <!-- 商品列表-->
+        <GoodItem
+          :goods="goods"
+          v-for="goods in BaseList"
+          :key="goods.id"
+        ></GoodItem>
       </div>
     </div>
   </div>

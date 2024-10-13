@@ -16,3 +16,10 @@ export const getCategoryFilterAPI = (id) => {
     }
   })
 }
+export const getBaseListApi = (data) => {
+  return httpInstance({
+    url: '/category/goods/temporary',
+    method: 'POST',
+    data
+  })
+}
