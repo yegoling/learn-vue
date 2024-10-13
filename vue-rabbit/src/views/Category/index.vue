@@ -1,34 +1,20 @@
 <!--Category/index.vue-->
 <script setup>
-import { ref } from 'vue'
 import { getCategoryApi } from '@/apis/category'
-import { useRoute } from 'vue-router'
 import Banner from '../Home/components/subComponents/Banner.vue'
-import { getBannerApi } from '@/apis/layout'
 import { onBeforeRouteUpdate } from 'vue-router'
+import { useBanner } from './composables/useBanner'
+import { useCategory } from './composables/useCategory'
 
-const BannerList = ref([])
-const getBannerList = async () => {
-  const res = await getBannerApi()
-  BannerList.value = res.result
-}
-
-const CategoryList = ref({})
-const getCategoryList = async () => {
-  const route = useRoute()
-  const res = await getCategoryApi(route.params.id)
-  CategoryList.value = res.result
-}
+const { BannerList } = useBanner()
+const { CategoryList } = useCategory()
 
 const getNewCategoryList = async (id) => {
   const res = await getCategoryApi(id)
   CategoryList.value = res.result
 }
-getBannerList()
-getCategoryList()
 
 onBeforeRouteUpdate((to) => {
-  // console.log(to.params.id)
   getNewCategoryList(to.params.id)
 })
 </script>
