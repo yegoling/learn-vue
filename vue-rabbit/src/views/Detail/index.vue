@@ -4,7 +4,8 @@ import { useRoute } from 'vue-router'
 import { getDetailApi } from '@/apis/detail'
 import { ref } from 'vue'
 import DetailHot from './components/subComponents/DetailHot.vue'
-import ImageView from '@/components/ImageView/index.vue'
+import ImageView from '@/views/Detail/components/ImageView/index.vue'
+import XtsSku from '@/views/Detail/components/XtsSku/index.vue'
 
 const route = useRoute()
 const Goods = ref({})
@@ -64,6 +65,7 @@ console.log(Goods.value) //序号b
                   <p><i class="iconfont icon-dynamic-filling"></i>品牌主页</p>
                 </li>
               </ul>
+              <ImageView></ImageView>
             </div>
             <div class="spec">
               <!-- 商品信息区 -->
@@ -89,6 +91,7 @@ console.log(Goods.value) //序号b
                 </dl>
               </div>
               <!-- sku组件 -->
+              <XtsSku :goods="Goods"></XtsSku>
 
               <!-- 数据组件 -->
 

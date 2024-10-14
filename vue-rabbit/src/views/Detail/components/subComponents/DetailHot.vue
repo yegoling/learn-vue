@@ -1,6 +1,6 @@
 <!-- DetailHot.vue -->
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { getHotGoodsApi } from '@/apis/detail'
 import { useRoute } from 'vue-router'
 
@@ -13,7 +13,7 @@ const TypeMap = {
   1: '24小时热榜',
   2: '周热榜'
 }
-const title = () => TypeMap[props.HotType]
+const title = computed(() => TypeMap[props.HotType])
 
 const GoodsList = ref([])
 const route = useRoute()
