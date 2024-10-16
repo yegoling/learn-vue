@@ -85,7 +85,7 @@ onBeforeRouteUpdate((to) => {
 ### 这里不能写BannerList.value
 ![alt text](./readme_img/image2.png)
 
-### vue中组件加冒号的，说明后面的是一个变量或者表达式，没加冒号的后面就是对应的字符串字面量，所以注意以下转为动态路由后to前一定要加冒号！
+### vue中组件加冒号的，说明后面的是一个变量或者表达式，没加冒号的后面就是对应的字符串字面量，所以注意以下转为动态路由后to前一定要加冒号！但是用ref调用组件实例时，ref前不能加冒号！
 ```
 <RouterLink :to="`/category/${item.id}`">{{ item.name }}</RouterLink>
 ```
@@ -124,4 +124,5 @@ const BaseData = ref({
 ### 对下述代码，序号a输出结果不为空，序号b输出结果为空，原因在于由于await存在使请求api过程中b句先执行。由此可以推断出在onmounted中调用getGoods()的原因：保证getGoods()的执行顺序，防止意外情况？
 ![alt text](image4.jpg)
 
-
+### 调用pinia仓库中函数时，外层括号不用传参
+![alt text](image-1.png)
