@@ -6,16 +6,47 @@ import { ref } from 'vue'
 import DetailHot from './components/subComponents/DetailHot.vue'
 import ImageView from '@/views/Detail/components/ImageView/index.vue'
 import XtsSku from '@/views/Detail/components/XtsSku/index.vue'
+import { useCartStore } from '@/stores/CartStore'
+import { ElMessage } from 'element-plus'
 
 const route = useRoute()
 const Goods = ref({})
 const getGoods = async () => {
   const res = await getDetailApi(route.params.id)
   Goods.value = res.result //序号a
-  console.log(Goods.value)
+  // console.log(Goods.value)
 }
 getGoods()
-console.log(Goods.value) //序号b
+// console.log(Goods.value) //序号b
+
+const CartStore = useCartStore()
+const Count = ref(1)
+// const CountChange = (Count) => {}
+
+let skuObj = {}
+const skuChange = (sku) => {
+  console.log(sku)
+  skuObj = sku
+  console.log(skuObj) //选满了就有值，可以作为一个判断条件
+}
+
+const addCart = () => {
+  if (skuObj.skuId) {
+    CartStore.addCart({
+      //传参
+      id: Goods.value.id, //商品id
+      name: Goods.value.name, //商品名称
+      picture: Goods.value.mainPictures[0], //图片
+      price: Goods.value.price, //最新价格
+      count: Count.value, //商品数量
+      skuId: skuObj.skuId,
+      attrsText: skuObj.specsText, //商品规格文本
+      selected: true //商品是否选中
+    })
+  } else {
+    ElMessage.warning('请选择规格')
+  }
+}
 </script>
 
 <template>
@@ -91,13 +122,19 @@ console.log(Goods.value) //序号b
                 </dl>
               </div>
               <!-- sku组件 -->
-              <XtsSku :goods="Goods"></XtsSku>
+              <XtsSku :goods="Goods" @change="skuChange"></XtsSku>
 
               <!-- 数据组件 -->
+              <el-input-number
+                v-model="Count"
+                @change="CountChange"
+              ></el-input-number>
 
               <!-- 按钮组件 -->
               <div>
-                <el-button size="large" class="btn"> 加入购物车 </el-button>
+                <el-button size="large" class="btn" @click="addCart">
+                  加入购物车
+                </el-button>
               </div>
             </div>
           </div>

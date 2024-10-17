@@ -74,6 +74,10 @@ const { stop } = useIntersectionObserver(
 ```
 ## 更新路由缓存，实现一点就跳转，不需要再次刷新页面
 ```
+const getNewCategoryList = async (id) => {
+  const res = await getCategoryApi(id)
+  CategoryList.value = res.result
+}
 onBeforeRouteUpdate((to) => {
   getNewCategoryList(to.params.id)
 })

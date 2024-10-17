@@ -1,8 +1,8 @@
 <script setup>
 import { useCategoryStore } from '@/stores/CategoryStore'
-
+import HeadCart from './HeadCart.vue'
 const categoryStore = useCategoryStore()
-console.log(categoryStore.categoryList)
+// console.log(categoryStore.categoryList)
 </script>
 
 <template>
@@ -27,6 +27,7 @@ console.log(categoryStore.categoryList)
         <input type="text" placeholder="搜一搜" />
       </div>
       <!-- 头部购物车 -->
+      <HeadCart></HeadCart>
     </div>
   </header>
 </template>
